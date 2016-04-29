@@ -1,4 +1,3 @@
-require 'cgi'
 require 'rubycouch/request'
 
 class RubyClient
@@ -20,9 +19,7 @@ class RubyClient
     template = RequestTemplate.new(@instance_root_uri)
     template.method = request_definition.method
     template.path = request_definition.path
-    template.query = request_definition.query_items.map { |k,v|
-      "#{CGI.escape(k)}=#{CGI.escape(v)}"
-    }.join("&")
+    template.query = request_definition.query_string
     template
   end
 

@@ -1,8 +1,16 @@
+require 'cgi'
+
 class RequestDefinition
 
   attr_reader :method
   attr_reader :path
   attr_reader :query_items
+
+  def query_string
+    query_items.map { |k,v|
+      "#{CGI.escape(k)}=#{CGI.escape(v)}"
+    }.join("&")
+  end
 
 end
 
