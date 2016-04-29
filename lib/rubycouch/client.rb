@@ -4,6 +4,7 @@ class RubyClient
 
   def initialize(instance_root_uri)
     @instance_root_uri = instance_root_uri
+    @requestor = Requestor.new()
   end
 
   def database(name)
@@ -11,8 +12,7 @@ class RubyClient
   end
 
   def make_request(request_definition)
-    requestor = Requestor.new()
-    requestor.response_json_for(make_template(request_definition))
+    @requestor.response_json_for(make_template(request_definition))
   end
 
   def make_template(request_definition)
