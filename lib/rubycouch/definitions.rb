@@ -72,12 +72,6 @@ end
 #
 class DatabaseRequestDefinition < RequestDefinition
 
-  attr_reader :sub_path
-
-  def initialize
-    @sub_path = ''
-  end
-
   def database_name=(database_name)
     @database_name = database_name
   end
@@ -94,6 +88,8 @@ class DatabaseRequestDefinition < RequestDefinition
 end
 
 class DatabaseInfo < DatabaseRequestDefinition
+
+  attr_reader :sub_path
 
   def initialize
     @method = 'GET'
