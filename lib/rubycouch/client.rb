@@ -1,3 +1,4 @@
+require 'cgi'
 require 'rubycouch/request'
 
 class RubyClient
@@ -19,7 +20,9 @@ class RubyClient
     template = RequestTemplate.new(@instance_root_uri)
     template.method = request_definition.method
     template.path = request_definition.path
-    template.query = request_definition.query
+    template.query = request_definition.query_items.map { |k,v|
+      "#{CGI.escape(k)}=#{CGI.escape(v)}"
+    }.join("&")
     template
   end
 
@@ -34,15 +37,6 @@ class Database
 
   def make_request(request_definition)
     @client.make_request(request_definition)
-  end
-
-  def augment_definition!(request_definition)
-    # A bit of cleaning to make constructing the path easier
-    path = request_definition.path
-    path = path[1..-1] if path.start_with? '/'
-
-    request_definition.path = "/#{@name}/#{path}"
-    request_definition
   end
 
   def make_template(request_definition)

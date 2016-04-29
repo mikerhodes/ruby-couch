@@ -45,4 +45,17 @@ class RubyCouchTest < Minitest::Test
     assert_equal '', template.query
   end
 
+  def test_get_document_with_revid_template
+    client = RubyClient.new(URI.parse('http://localhost:5984'))
+    database = client.database('hola')
+    get_document = GetDocument.new('test-doc-1')
+    get_document.rev_id = '1-asdfsfd'
+    template = database.make_template(get_document)
+    assert_equal 'http', template.scheme
+    assert_equal 'localhost', template.host
+    assert_equal 5984, template.port
+    assert_equal '/hola/test-doc-1', template.path
+    assert_equal 'rev=1-asdfsfd', template.query
+  end
+
 end
