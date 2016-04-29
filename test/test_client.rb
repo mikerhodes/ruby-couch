@@ -58,4 +58,13 @@ class RubyCouchTest < Minitest::Test
     assert_equal 'rev=1-asdfsfd', template.query
   end
 
+  def test_not_db_request_raises_error_in_database_class
+    client = RubyClient.new(URI.parse('http://localhost:5984'))
+    database = client.database('hola')
+
+    assert_raises do
+      template = database.make_template(AllDbs.new)
+    end
+  end
+
 end

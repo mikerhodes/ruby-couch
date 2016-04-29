@@ -40,6 +40,9 @@ class Database
   end
 
   def make_template(request_definition)
+    if not request_definition.is_a?(DatabaseRequestDefinition) then
+      raise 'Database requests must be DatabaseRequestDefinition subclasses'
+    end
     request_definition.database_name = @name
     @client.make_template(request_definition)
   end
