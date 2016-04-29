@@ -33,7 +33,6 @@ class Database
   end
 
   def make_request(request_definition)
-    augment_definition!(request_definition)
     @client.make_request(request_definition)
   end
 
@@ -47,7 +46,7 @@ class Database
   end
 
   def make_template(request_definition)
-    augment_definition!(request_definition)
+    request_definition.database_name = @name
     @client.make_template(request_definition)
   end
 
