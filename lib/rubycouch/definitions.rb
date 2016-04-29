@@ -1,5 +1,8 @@
 require 'cgi'
 
+##
+# Common methods for request definition classes.
+#
 class RequestDefinition
 
   attr_reader :method
@@ -14,6 +17,9 @@ class RequestDefinition
 
 end
 
+##
+# Marker for requests to the main instance endpoint, like _all_dbs
+#
 class InstanceRequestDefinition < RequestDefinition
 
 end
@@ -38,6 +44,20 @@ class AllDbs < InstanceRequestDefinition
 
 end
 
+##
+# Marker for requests to the a database endpoint, like getting a document
+#
+# Sub-classes contain real requests, and are expected to provide at
+# least a custom `sub_path` method which returns the un-escaped value
+# to use as the path after the database name path portion. So for a
+# document GET:
+#
+#     def sub_path
+#       "/#{@doc_id}"
+#     end
+#
+# I guess this should probably be a mixin of somekind...
+#
 class DatabaseRequestDefinition < RequestDefinition
 
   attr_reader :sub_path
