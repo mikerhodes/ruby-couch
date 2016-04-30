@@ -30,8 +30,8 @@ class Database
   end
 
   def make_request(request_definition)
-    if not request_definition.is_a?(DatabaseRequestDefinition) then
-      raise 'Database requests must be DatabaseRequestDefinition subclasses'
+    if not request_definition.respond_to?(:database_name=) then
+      raise 'Database requests must respond to :database_name'
     end
     request_definition.database_name = @name
     @client.make_request(request_definition)
