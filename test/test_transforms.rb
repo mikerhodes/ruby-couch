@@ -179,4 +179,19 @@ class TransformsTest < Minitest::Test
     assert_equal '{"hello": "world"}', template.body
   end
 
+  def test_view_get_template
+    get_view = GetView.new('views101', 'latin_name')
+    get_view.database_name = 'hola'
+    template = RequestTransform.make_template(
+      @instance_root_uri,
+      get_view
+    )
+
+    assert_equal 'GET', template.method
+    assert_equal 'http', template.scheme
+    assert_equal 'localhost', template.host
+    assert_equal 5984, template.port
+    assert_equal '/hola/_design/views101/_view/latin_name', template.path
+  end
+
 end
