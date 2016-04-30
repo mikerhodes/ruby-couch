@@ -77,4 +77,18 @@ class RubyCouchTest < Minitest::Test
     end
   end
 
+  def test_delete_document_with_revid_template
+    client = RubyClient.new(URI.parse('http://localhost:5984'))
+    database = client.database('hola')
+    delete_document = DeleteDocument.new('test-doc-1', '1-asdfsfd')
+    template = database.make_template(delete_document)
+
+    assert_equal 'DELETE', template.method
+    assert_equal 'http', template.scheme
+    assert_equal 'localhost', template.host
+    assert_equal 5984, template.port
+    assert_equal '/hola/test-doc-1', template.path
+    assert_equal 'rev=1-asdfsfd', template.query
+  end
+
 end

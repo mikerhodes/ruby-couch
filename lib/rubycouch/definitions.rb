@@ -133,3 +133,22 @@ class GetDocument < DatabaseRequestDefinition
   end
 
 end
+
+class DeleteDocument < DatabaseRequestDefinition
+
+  include QueryStringMixin
+
+  def initialize(doc_id, rev_id)
+    @doc_id = doc_id
+    merge_query_items({:rev => rev_id})
+  end
+
+  def method
+    'DELETE'
+  end
+
+  def sub_path
+    "/#{@doc_id}"
+  end
+
+end
