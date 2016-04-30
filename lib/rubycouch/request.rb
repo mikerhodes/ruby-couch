@@ -15,6 +15,7 @@ class RequestTemplate
   attr_accessor :content_type
   attr_accessor :accept
   attr_accessor :response_handler
+  attr_accessor :basic_auth
 
   def initialize(uri)
     @method = 'GET'
@@ -27,6 +28,7 @@ class RequestTemplate
     @content_type = 'application/json'
     @accept = 'application/json'
     @response_handler = nil
+    @basic_auth = nil
   end
 
 end
@@ -70,6 +72,10 @@ class Requestor
 
     request.body = template.body if template.body
     request.content_type = template.content_type
+    request.basic_auth(
+      template.basic_auth[:username],
+      template.basic_auth[:password]
+    ) if template.basic_auth
 
     request['Accept'] = template.accept
 

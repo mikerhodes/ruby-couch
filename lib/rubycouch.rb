@@ -14,6 +14,9 @@ class RubyCouch
   def self.demo
     client = CouchClient.new(URI.parse('http://localhost:5984'))
 
+    # Add basic authentication with:
+    # client.basic_auth 'username', 'password'
+
     print "====== InstanceInfo ======\n"
     print client.make_request(InstanceInfo.new)
 

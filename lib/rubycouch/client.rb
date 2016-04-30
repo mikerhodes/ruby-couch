@@ -3,9 +3,19 @@ require 'rubycouch/requesttransform'
 
 class CouchClient
 
+  ##
+  # Initialise the client with a Couch root URI.
+  #
+  # :param instance_root_uri Something like 'http://localhost:5984'
   def initialize(instance_root_uri)
     @instance_root_uri = instance_root_uri
     @requestor = Requestor.new()
+  end
+
+  ##
+  # Add authentication to requests made by this client.
+  def basic_auth(username, password)
+    @basic_auth = {:username => username, :password => password}
   end
 
   def database(name)
@@ -17,6 +27,7 @@ class CouchClient
       @instance_root_uri,
       request_definition
     )
+    template.basic_auth = @basic_auth if @basic_auth
     @requestor.processed_response_for(template)
   end
 
