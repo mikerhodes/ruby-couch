@@ -6,6 +6,8 @@ class RubyCouchTest < Minitest::Test
   def test_simple_template
     client = RubyClient.new(URI.parse('http://localhost:5984'))
     template = client.make_template(InstanceInfo.new)
+
+    assert_equal 'GET', template.method
     assert_equal 'http', template.scheme
     assert_equal 'localhost', template.host
     assert_equal 5984, template.port
@@ -16,6 +18,8 @@ class RubyCouchTest < Minitest::Test
   def test_all_dbs_template
     client = RubyClient.new(URI.parse('http://localhost:5984'))
     template = client.make_template(AllDbs.new)
+
+    assert_equal 'GET', template.method
     assert_equal 'http', template.scheme
     assert_equal 'localhost', template.host
     assert_equal 5984, template.port
@@ -27,6 +31,8 @@ class RubyCouchTest < Minitest::Test
     client = RubyClient.new(URI.parse('http://localhost:5984'))
     database = client.database('hola')
     template = database.make_template(DatabaseInfo.new)
+
+    assert_equal 'GET', template.method
     assert_equal 'http', template.scheme
     assert_equal 'localhost', template.host
     assert_equal 5984, template.port
@@ -38,6 +44,8 @@ class RubyCouchTest < Minitest::Test
     client = RubyClient.new(URI.parse('http://localhost:5984'))
     database = client.database('hola')
     template = database.make_template(GetDocument.new('test-doc-1'))
+
+    assert_equal 'GET', template.method
     assert_equal 'http', template.scheme
     assert_equal 'localhost', template.host
     assert_equal 5984, template.port
@@ -51,6 +59,8 @@ class RubyCouchTest < Minitest::Test
     get_document = GetDocument.new('test-doc-1')
     get_document.rev_id = '1-asdfsfd'
     template = database.make_template(get_document)
+
+    assert_equal 'GET', template.method
     assert_equal 'http', template.scheme
     assert_equal 'localhost', template.host
     assert_equal 5984, template.port
