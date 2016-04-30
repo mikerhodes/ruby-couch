@@ -109,4 +109,58 @@ class TransformsTest < Minitest::Test
     assert_equal 'rev=1-asdfsfd', template.query
   end
 
+  def test_put_document_with_revid_template
+    put_document = PutDocument.new('test-doc-1', '{"hello": "world"}')
+    put_document.rev_id = '1-asdfsfd'
+    put_document.database_name = 'hola'
+    template = RequestTransform.make_template(
+      @instance_root_uri,
+      put_document
+    )
+
+    assert_equal 'PUT', template.method
+    assert_equal 'http', template.scheme
+    assert_equal 'localhost', template.host
+    assert_equal 'application/json', template.content_type
+    assert_equal 5984, template.port
+    assert_equal '/hola/test-doc-1', template.path
+    assert_equal 'rev=1-asdfsfd', template.query
+    assert_equal '{"hello": "world"}', template.body
+  end
+
+  def test_put_document_without_revid_template
+    put_document = PutDocument.new('test-doc-1', '{"hello": "world"}')
+    put_document.database_name = 'hola'
+    template = RequestTransform.make_template(
+      @instance_root_uri,
+      put_document
+    )
+
+    assert_equal 'PUT', template.method
+    assert_equal 'http', template.scheme
+    assert_equal 'localhost', template.host
+    assert_equal 'application/json', template.content_type
+    assert_equal 5984, template.port
+    assert_equal '/hola/test-doc-1', template.path
+    assert_equal '{"hello": "world"}', template.body
+  end
+
+  def test_put_document_with_contenttype_template
+    put_document = PutDocument.new('test-doc-1', '{"hello": "world"}')
+    put_document.database_name = 'hola'
+    put_document.content_type = 'hola'
+    template = RequestTransform.make_template(
+      @instance_root_uri,
+      put_document
+    )
+
+    assert_equal 'PUT', template.method
+    assert_equal 'http', template.scheme
+    assert_equal 'localhost', template.host
+    assert_equal 'hola', template.content_type
+    assert_equal 5984, template.port
+    assert_equal '/hola/test-doc-1', template.path
+    assert_equal '{"hello": "world"}', template.body
+  end
+
 end

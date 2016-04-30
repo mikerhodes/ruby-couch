@@ -11,6 +11,9 @@ class RequestTemplate
   attr_accessor :host
   attr_accessor :path
   attr_accessor :query
+  attr_accessor :body
+  attr_accessor :content_type
+  attr_accessor :accept
 
   def initialize(uri)
     @method = 'GET'
@@ -19,6 +22,9 @@ class RequestTemplate
     @port = uri.port
     @path = uri.path
     @query = uri.query
+    @body = nil
+    @content_type = 'application/json'
+    @accept = 'application/json'
   end
 
 end
@@ -58,7 +64,10 @@ class Requestor
       raise "Unsupported HTTP method: #{template.method}"
     end
 
-    # request["Host"] = host_header if host_header
+    request.body = template.body if template.body
+    request.content_type = template.content_type
+
+    request['Accept'] = template.accept
 
     request
   end
