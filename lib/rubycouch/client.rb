@@ -1,7 +1,7 @@
 require 'rubycouch/request'
 require 'rubycouch/requesttransform'
 
-class RubyClient
+class CouchClient
 
   def initialize(instance_root_uri)
     @instance_root_uri = instance_root_uri

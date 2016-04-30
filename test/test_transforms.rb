@@ -85,11 +85,11 @@ class TransformsTest < Minitest::Test
   end
 
   def test_not_db_request_raises_error_in_database_class
-    client = RubyClient.new(URI.parse('http://localhost:5984'))
+    client = CouchClient.new(URI.parse('http://localhost:5984'))
     database = client.database('hola')
 
     assert_raises do
-      template = database.make_template(AllDbs.new)
+      template = database.make_request(AllDbs.new)
     end
   end
 
