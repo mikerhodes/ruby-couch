@@ -1,11 +1,17 @@
 require 'minitest/autorun'
 require 'rubycouch'
 
-class RubyCouchTest < Minitest::Test
+class TransformsTest < Minitest::Test
+
+  def setup
+    @instance_root_uri = URI.parse('http://localhost:5984')
+  end
 
   def test_simple_template
-    client = RubyClient.new(URI.parse('http://localhost:5984'))
-    template = client.make_template(InstanceInfo.new)
+    template = RequestTransform.make_template(
+      @instance_root_uri,
+      InstanceInfo.new
+    )
 
     assert_equal 'GET', template.method
     assert_equal 'http', template.scheme
@@ -16,8 +22,10 @@ class RubyCouchTest < Minitest::Test
   end
 
   def test_all_dbs_template
-    client = RubyClient.new(URI.parse('http://localhost:5984'))
-    template = client.make_template(AllDbs.new)
+    template = RequestTransform.make_template(
+      @instance_root_uri,
+      AllDbs.new
+    )
 
     assert_equal 'GET', template.method
     assert_equal 'http', template.scheme
@@ -28,9 +36,12 @@ class RubyCouchTest < Minitest::Test
   end
 
   def test_simple_database_template
-    client = RubyClient.new(URI.parse('http://localhost:5984'))
-    database = client.database('hola')
-    template = database.make_template(DatabaseInfo.new)
+    database_info = DatabaseInfo.new
+    database_info.database_name = 'hola'
+    template = RequestTransform.make_template(
+      @instance_root_uri,
+      database_info
+    )
 
     assert_equal 'GET', template.method
     assert_equal 'http', template.scheme
@@ -41,9 +52,12 @@ class RubyCouchTest < Minitest::Test
   end
 
   def test_simple_get_document_template
-    client = RubyClient.new(URI.parse('http://localhost:5984'))
-    database = client.database('hola')
-    template = database.make_template(GetDocument.new('test-doc-1'))
+    get_document = GetDocument.new('test-doc-1')
+    get_document.database_name = 'hola'
+    template = RequestTransform.make_template(
+      @instance_root_uri,
+      get_document
+    )
 
     assert_equal 'GET', template.method
     assert_equal 'http', template.scheme
@@ -54,11 +68,13 @@ class RubyCouchTest < Minitest::Test
   end
 
   def test_get_document_with_revid_template
-    client = RubyClient.new(URI.parse('http://localhost:5984'))
-    database = client.database('hola')
     get_document = GetDocument.new('test-doc-1')
+    get_document.database_name = 'hola'
     get_document.rev_id = '1-asdfsfd'
-    template = database.make_template(get_document)
+    template = RequestTransform.make_template(
+      @instance_root_uri,
+      get_document
+    )
 
     assert_equal 'GET', template.method
     assert_equal 'http', template.scheme
@@ -78,10 +94,12 @@ class RubyCouchTest < Minitest::Test
   end
 
   def test_delete_document_with_revid_template
-    client = RubyClient.new(URI.parse('http://localhost:5984'))
-    database = client.database('hola')
     delete_document = DeleteDocument.new('test-doc-1', '1-asdfsfd')
-    template = database.make_template(delete_document)
+    delete_document.database_name = 'hola'
+    template = RequestTransform.make_template(
+      @instance_root_uri,
+      delete_document
+    )
 
     assert_equal 'DELETE', template.method
     assert_equal 'http', template.scheme
