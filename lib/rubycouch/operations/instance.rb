@@ -1,3 +1,5 @@
+require 'rubycouch/operations/base'
+
 class InstanceInfo
 
   include SimpleJsonResponseMixin

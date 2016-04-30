@@ -4,11 +4,11 @@ require 'uri'
 require 'json'
 
 require 'rubycouch/client'
-require 'rubycouch/definitions'
-require 'rubycouch/document'
-require 'rubycouch/view'
-require 'rubycouch/database'
-require 'rubycouch/instance'
+require 'rubycouch/operations/base'
+require 'rubycouch/operations/database'
+require 'rubycouch/operations/document'
+require 'rubycouch/operations/instance'
+require 'rubycouch/operations/view'
 
 class RubyCouch
   def self.demo

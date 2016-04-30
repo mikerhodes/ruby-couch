@@ -7,10 +7,15 @@ Gem::Specification.new do |s|
   s.authors     = ["Mike Rhodes"]
   s.email       = 'mike.rhodes@dx13.co.uk'
   s.files       = [
-    'lib/rubycouch.rb', 'lib/rubycouch/request.rb',
-    'lib/rubycouch/client.rb', 'lib/rubycouch/definitions.rb',
-    'lib/rubycouch/instance.rb', 'lib/rubycouch/database.rb',
-    'lib/rubycouch/document.rb']
+    'lib/rubycouch.rb',
+    'lib/rubycouch/request.rb',
+    'lib/rubycouch/requesttransform.rb',
+    'lib/rubycouch/client.rb',
+    'lib/rubycouch/operations/base.rb',
+    'lib/rubycouch/operations/database.rb',
+    'lib/rubycouch/operations/document.rb',
+    'lib/rubycouch/operations/instance.rb',
+    'lib/rubycouch/operations/view.rb']
   s.homepage    =
     'https://github.com/mikerhodes/ruby-couch'
   s.license       = 'Apache 2'

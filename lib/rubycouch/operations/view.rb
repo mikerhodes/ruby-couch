@@ -1,4 +1,5 @@
 
+require 'rubycouch/operations/base'
 
 class GetView
 
