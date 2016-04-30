@@ -14,3 +14,18 @@ class DatabaseInfo
   end
 
 end
+
+class AllDocs
+
+  include DatabaseRequestMixin
+  include SimpleJsonResponseMixin
+
+  def method
+    'GET'
+  end
+
+  def sub_path
+    '/_all_docs'
+  end
+
+end
