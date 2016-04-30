@@ -5,6 +5,9 @@ require 'json'
 
 require 'rubycouch/client'
 require 'rubycouch/definitions'
+require 'rubycouch/document'
+require 'rubycouch/database'
+require 'rubycouch/instance'
 
 class RubyCouch
   def self.demo

@@ -45,30 +45,6 @@ class InstanceRequestDefinition
 
 end
 
-class InstanceInfo < InstanceRequestDefinition
-
-  def method
-    'GET'
-  end
-
-  def path
-    '/'
-  end
-
-end
-
-class AllDbs < InstanceRequestDefinition
-
-  def method
-    'GET'
-  end
-
-  def path
-    '/_all_dbs'
-  end
-
-end
-
 ##
 # Marker for requests to the a database endpoint, like getting a document
 #
@@ -96,59 +72,6 @@ class DatabaseRequestDefinition
       fixed_sub_path = sub_path
     end
     @path = "/#{@database_name}/#{fixed_sub_path}"
-  end
-
-end
-
-class DatabaseInfo < DatabaseRequestDefinition
-
-  def method
-    'GET'
-  end
-
-  def sub_path
-    '/'
-  end
-
-end
-
-class GetDocument < DatabaseRequestDefinition
-
-  include QueryStringMixin
-
-  def initialize(doc_id)
-    @doc_id = doc_id
-  end
-
-  def method
-    'GET'
-  end
-
-  def rev_id=(rev_id)
-    merge_query_items({:rev => rev_id})
-  end
-
-  def sub_path
-    "/#{@doc_id}"
-  end
-
-end
-
-class DeleteDocument < DatabaseRequestDefinition
-
-  include QueryStringMixin
-
-  def initialize(doc_id, rev_id)
-    @doc_id = doc_id
-    merge_query_items({:rev => rev_id})
-  end
-
-  def method
-    'DELETE'
-  end
-
-  def sub_path
-    "/#{@doc_id}"
   end
 
 end
