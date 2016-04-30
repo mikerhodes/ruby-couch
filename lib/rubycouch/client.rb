@@ -16,10 +16,11 @@ class RubyClient
   end
 
   def make_template(request_definition)
+    rd = request_definition
     template = RequestTemplate.new(@instance_root_uri)
-    template.method = request_definition.method
-    template.path = request_definition.path
-    template.query = request_definition.query_string
+    template.method = rd.respond_to?(:method) ? rd.method : 'GET'
+    template.path = rd.respond_to?(:path) ? rd.path : '/'
+    template.query = rd.respond_to?(:query_string) ? rd.query_string : ''
     template
   end
 
