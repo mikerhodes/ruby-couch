@@ -1,5 +1,7 @@
 class InstanceInfo
 
+  include SimpleJsonResponseMixin
+
   def method
     'GET'
   end
@@ -11,6 +13,8 @@ class InstanceInfo
 end
 
 class AllDbs
+
+  include SimpleJsonResponseMixin
 
   def method
     'GET'

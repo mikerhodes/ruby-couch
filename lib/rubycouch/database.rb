@@ -3,6 +3,7 @@
 class DatabaseInfo
 
   include DatabaseRequestMixin
+  include SimpleJsonResponseMixin
 
   def method
     'GET'

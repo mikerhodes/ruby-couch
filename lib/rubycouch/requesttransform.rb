@@ -8,6 +8,7 @@ class RequestTransform
     template.query = definition.respond_to?(:query_string) ? definition.query_string : ''
     template.body = definition.body if definition.respond_to?(:body)
     template.content_type = definition.content_type if definition.respond_to?(:content_type)
+    template.response_handler = definition.response_handler if definition.respond_to?(:response_handler)
     template
   end
 

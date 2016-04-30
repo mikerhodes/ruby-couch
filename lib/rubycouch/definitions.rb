@@ -70,3 +70,16 @@ module DatabaseRequestMixin
   end
 
 end
+
+
+##
+# Module which provides the simple response behaviour of decoding
+# JSON into a hash/array/primitive.
+#
+module SimpleJsonResponseMixin
+
+  def response_handler
+    lambda { |response| JSON.parse(response.body) }
+  end
+
+end

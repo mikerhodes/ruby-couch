@@ -4,6 +4,7 @@ class GetDocument
 
   include QueryStringMixin
   include DatabaseRequestMixin
+  include SimpleJsonResponseMixin
 
   def initialize(doc_id)
     @doc_id = doc_id
@@ -32,6 +33,7 @@ class PutDocument
 
   include QueryStringMixin
   include DatabaseRequestMixin
+  include SimpleJsonResponseMixin
 
   attr_reader :body
   attr_accessor :content_type
@@ -60,6 +62,7 @@ class DeleteDocument
 
   include QueryStringMixin
   include DatabaseRequestMixin
+  include SimpleJsonResponseMixin
 
   def initialize(doc_id, rev_id)
     @doc_id = doc_id

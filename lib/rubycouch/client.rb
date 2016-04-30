@@ -17,7 +17,7 @@ class CouchClient
       @instance_root_uri,
       request_definition
     )
-    @requestor.response_json_for(template)
+    @requestor.processed_response_for(template)
   end
 
 end

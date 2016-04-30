@@ -14,6 +14,7 @@ class RequestTemplate
   attr_accessor :body
   attr_accessor :content_type
   attr_accessor :accept
+  attr_accessor :response_handler
 
   def initialize(uri)
     @method = 'GET'
@@ -25,14 +26,17 @@ class RequestTemplate
     @body = nil
     @content_type = 'application/json'
     @accept = 'application/json'
+    @response_handler = nil
   end
 
 end
 
 class Requestor
 
-  def response_json_for(template)
-    JSON.parse(response_for(template).body)
+  def processed_response_for(template)
+    raise "processed_response_for() requires `template` not be nil" unless template
+    raise "processed_response_for() requires `template.response_handler` not be nil" unless template.response_handler
+    template.response_handler.call(response_for(template))
   end
 
   def response_for(template)
