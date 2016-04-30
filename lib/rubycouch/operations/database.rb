@@ -20,6 +20,7 @@ class AllDocs
 
   include DatabaseRequestMixin
   include SimpleJsonResponseMixin
+  include QueryStringMixin
 
   def method
     'GET'
