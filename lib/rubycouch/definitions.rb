@@ -1,3 +1,7 @@
+#
+# This file contains shared definition code and mixins.
+#
+
 require 'cgi'
 
 ##
@@ -39,27 +43,18 @@ module QueryStringMixin
 end
 
 ##
-# Marker for requests to the main instance endpoint, like _all_dbs
+# Add `database_name=` and an implementation of `path` that munges the
+# database name into the path.
 #
-class InstanceRequestDefinition
-
-end
-
-##
-# Marker for requests to the a database endpoint, like getting a document
-#
-# Sub-classes contain real requests, and are expected to provide at
-# least a custom `sub_path` method which returns the un-escaped value
-# to use as the path after the database name path portion. So for a
-# document GET:
+# Instead of `path`, users of this class should provide `sub_path` containing
+# the path to use after the database name. For example, getting a document
+# might provide:
 #
 #     def sub_path
 #       "/#{@doc_id}"
 #     end
 #
-# I guess this should probably be a mixin of somekind...
-#
-class DatabaseRequestDefinition
+module DatabaseRequestMixin
 
   def database_name=(database_name)
     @database_name = database_name

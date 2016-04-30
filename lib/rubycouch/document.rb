@@ -1,8 +1,9 @@
 
 
-class GetDocument < DatabaseRequestDefinition
+class GetDocument
 
   include QueryStringMixin
+  include DatabaseRequestMixin
 
   def initialize(doc_id)
     @doc_id = doc_id
@@ -22,9 +23,10 @@ class GetDocument < DatabaseRequestDefinition
 
 end
 
-class DeleteDocument < DatabaseRequestDefinition
+class DeleteDocument
 
   include QueryStringMixin
+  include DatabaseRequestMixin
 
   def initialize(doc_id, rev_id)
     @doc_id = doc_id

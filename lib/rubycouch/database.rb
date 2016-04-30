@@ -1,6 +1,8 @@
 
 
-class DatabaseInfo < DatabaseRequestDefinition
+class DatabaseInfo
+
+  include DatabaseRequestMixin
 
   def method
     'GET'

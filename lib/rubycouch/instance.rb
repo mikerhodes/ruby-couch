@@ -1,4 +1,4 @@
-class InstanceInfo < InstanceRequestDefinition
+class InstanceInfo
 
   def method
     'GET'
@@ -10,7 +10,7 @@ class InstanceInfo < InstanceRequestDefinition
 
 end
 
-class AllDbs < InstanceRequestDefinition
+class AllDbs
 
   def method
     'GET'
