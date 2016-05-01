@@ -2,13 +2,45 @@
 # Helpers for responses.
 #
 
+require 'net/http'
+require 'net/https'
+require 'json'
+
 ##
 # The return type for all response handlers
 #
 # This type will be returned from all `make_request` calls.
 #
-Struct.new("CouchResponse", :code, :json)
+# `code`: status code as string
+# `json`: on success, response body as json
+# `raw`: if response isn't json, then the response body
+# `success`: set if response is successful status code for request
+#
+class CouchResponse
 
+  attr_reader :code
+  attr_reader :raw
+  attr_reader :success
+
+  def initialize(code, raw, success)
+    @code = code
+    @raw = raw
+    @success = success
+  end
+
+  def json
+    JSON.parse(raw)
+  end
+
+  def to_s
+    "<CouchResponse code=\"#{@code}\", success=#{@success}, raw=\"#{@raw}\">"
+  end
+end
+
+def make_couch_response(response, body=nil)
+  body = if body then body else response.body end
+  CouchResponse.new(response.code, body, response.kind_of?(Net::HTTPSuccess))
+end
 
 ##
 # Module which provides the simple response behaviour of decoding
@@ -17,9 +49,7 @@ Struct.new("CouchResponse", :code, :json)
 module SimpleJsonResponseMixin
 
   def response_handler
-    lambda { |response|
-      Struct::CouchResponse.new(response.code, JSON.parse(response.read_body))
-    }
+    lambda { |response| make_couch_response response }
   end
 
 end
@@ -68,6 +98,10 @@ module ViewStreamingResponseMixin
     if not @row_callback.nil?
 
       lambda { |response|
+
+        # We don't parse the string
+        return make_couch_response(response) unless response.kind_of?(Net::HTTPSuccess)
+
         non_row_body = ''
         row_idx = 0
         LineReader.read_body response do |line|
@@ -81,13 +115,13 @@ module ViewStreamingResponseMixin
             non_row_body += line
           end
         end
-        Struct::CouchResponse.new(response.code, JSON.parse(non_row_body))
+        make_couch_response(response, non_row_body)
       }
 
     else
 
       lambda { |response|
-        Struct::CouchResponse.new(response.code, JSON.parse(response.read_body))
+        make_couch_response(response)
       }
 
     end

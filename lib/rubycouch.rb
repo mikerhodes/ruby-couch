@@ -56,6 +56,11 @@ class RubyCouch
     get_view.merge_query_items({:reduce => true})
     print database.make_request(get_view)
 
+    # This database probably doesn't exist so it'll give an error
+    database = client.database('animaldsdfsdfb')
+    print "\n\n====== animaldsdfsdfb -- DatabaseInfo ======\n"
+    print database.make_request(DatabaseInfo.new)
+
     print "\n\ndone.\n"
   end
 end
