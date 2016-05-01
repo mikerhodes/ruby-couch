@@ -37,6 +37,20 @@ class RubyCouch
     print "\n\n====== animaldb -- GetView(view101) ======\n"
     print database.make_request(GetView.new('views101', 'latin_name'))
 
+    # Using the callback/iter approach means the entire response
+    # isn't stored into memory. Instead, result rows are passed to
+    # the called as they arrive off the wire, and the return value
+    # from make request doesn't contain them, only an empty array.
+    print "\n\n====== animaldb -- GetView(view101) iter ======\n"
+    get_view = GetView.new('views101', 'latin_name')
+    get_view.merge_query_items({:include_docs => true})
+    puts "Rows:"
+    get_view.row_callback = lambda { |row, idx|
+        puts sprintf("  %d: %s", idx, row)
+    }
+    return_value = database.make_request(get_view)
+    puts sprintf("Return value:\n  %s", return_value)
+
     print "\n\n====== animaldb -- GetView Reduced(view101) ======\n"
     get_view = GetView.new('views101', 'latin_name_count')
     get_view.merge_query_items({:reduce => true})

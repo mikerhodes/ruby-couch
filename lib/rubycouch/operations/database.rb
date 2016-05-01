@@ -19,7 +19,7 @@ end
 class AllDocs
 
   include DatabaseRequestMixin
-  include SimpleJsonResponseMixin
+  include ViewStreamingResponseMixin
   include QueryStringMixin
 
   def method

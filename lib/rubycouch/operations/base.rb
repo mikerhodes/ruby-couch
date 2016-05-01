@@ -4,6 +4,8 @@
 
 require 'cgi'
 
+require 'rubycouch/linereader'
+
 ##
 # Handles standard query string funcitonality for request definitions.
 #
@@ -78,25 +80,80 @@ end
 #
 module SimpleJsonResponseMixin
 
-  # def response_handler
-  #   lambda { |response| JSON.parse(response.body) }
-  # end
+  def response_handler
+    lambda { |response| JSON.parse(response.read_body) }
+  end
+
+end
+
+
+##
+# Provides a streaming response handler for use with views.
+#
+# Right now it _does_ make the assumption that each row is delivered
+# on its own line in the output.
+#
+# N.b., not for changes?
+module ViewStreamingResponseMixin
+
+  ##
+  # If set, Proc object will be called with row, idx pair.
+  # This also prevents rows ending up in the `make_request` return value.
+  attr_accessor :row_callback
+
+  # This class takes advantage of the fact that a view returns a
+  # result per line. And a row has a particular format, so it's
+  # easy to find them with a simple `start_with?`.
+  #
+  # For reduced rows:
+  # {"rows":[
+  # {"key":null,"value":5}
+  # ]}
+  #
+  # For non-reduced rows, this is:
+  # {"total_rows":5,"offset":0,"rows":[
+  # {"id":"kookaburra","key":"Dacelo novaeguineae","value":19},
+  # {"id":"snipe","key":"Gallinago gallinago","value":19},
+  # {"id":"llama","key":"Lama glama","value":10},
+  # {"id":"badger","key":"Meles meles","value":11},
+  # {"id":"aardvark","key":"Orycteropus afer","value":16}
+  # ]}
+  #
+  # The class stores up the result rows in rows, and then just
+  # parses the rest of the document excluding the rows.
+  #
+  # At some point, using json-stream or one of the yajl libs would
+  # be better than this assumption.
 
   def response_handler
 
-    lambda { |response|
-      # puts "===== response_handler =====", response
-      body = ''
-      response.read_body do |segment|
-        # puts "segment: ", segment
-        body += segment
-      end
-      # puts "body:", body
+    if not @row_callback.nil?
 
-      # puts "===== end response_handler ====="
+      lambda { |response|
+        non_row_body = ''
+        row_idx = 0
+        LineReader.read_body response do |line|
+          line = line.strip
+          if line.start_with? '{"key":' or line.start_with? '{"id":'
+            # A result row; send to the row_callback
+            row_callback.call JSON.parse(line.chomp(',')), row_idx
+            row_idx += 1
+          else
+            # Not a row, it goes into the main return value
+            non_row_body += line
+          end
+        end
+        JSON.parse(non_row_body)
+      }
 
-      JSON.parse(body)
-    }
+    else
+
+      lambda { |response|
+        JSON.parse(response.read_body)
+      }
+
+    end
+
   end
 
 end
