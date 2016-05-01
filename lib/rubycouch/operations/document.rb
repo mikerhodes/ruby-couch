@@ -1,5 +1,6 @@
 
 require 'rubycouch/operations/base'
+require 'rubycouch/operations/responses'
 
 class GetDocument
 
