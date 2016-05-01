@@ -1,6 +1,6 @@
 # A more HTTP-like CouchDB client for Ruby
 
-This client library is designed to be more familiar to those used to CouchDB's HTTP interface, as well as being a safe and efficient method of interacting with Couch. 
+This client library is designed to be more familiar to those used to CouchDB's HTTP interface, as well as being a safe and efficient method of interacting with CouchDB for those just getting started.
 
 It's based on the idea of _templates_ rather than _method calls_. Instead of calling a method with arguments, one makes a request by filling in a template and getting the client to make the request. Often there's not even anything to fill in:
 
