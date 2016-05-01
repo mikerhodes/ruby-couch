@@ -38,17 +38,24 @@ class Requestor
   def processed_response_for(template)
     raise "processed_response_for() requires `template` not be nil" unless template
     raise "processed_response_for() requires `template.response_handler` not be nil" unless template.response_handler
-    template.response_handler.call(response_for(template))
+    # template.response_handler.call(response_for(template))
+    response_for(template)
   end
 
   def response_for(template)
-    Net::HTTP.start(
+    client = Net::HTTP.start(
               template.host, template.port,
               :use_ssl => template.scheme == 'https',
-              :verify_mode => OpenSSL::SSL::VERIFY_PEER) do |client|
-      request = request_for(template)
-      client.request(request)
+              :verify_mode => OpenSSL::SSL::VERIFY_PEER)
+
+    request = request_for(template)
+    result = nil
+    # Called with a block to allow response handler to stream response body
+    client.request(request) do |response|
+      result = template.response_handler.call(response)
     end
+    client.finish()
+    result
   end
 
   def request_for(template)

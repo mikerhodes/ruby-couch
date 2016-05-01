@@ -78,8 +78,25 @@ end
 #
 module SimpleJsonResponseMixin
 
+  # def response_handler
+  #   lambda { |response| JSON.parse(response.body) }
+  # end
+
   def response_handler
-    lambda { |response| JSON.parse(response.body) }
+
+    lambda { |response|
+      # puts "===== response_handler =====", response
+      body = ''
+      response.read_body do |segment|
+        # puts "segment: ", segment
+        body += segment
+      end
+      # puts "body:", body
+
+      # puts "===== end response_handler ====="
+
+      JSON.parse(body)
+    }
   end
 
 end
