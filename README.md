@@ -2,7 +2,7 @@
 
 This client library is designed to be more familiar to those used to CouchDB's HTTP interface, as well as being a safe and efficient method of interacting with Couch. 
 
-It's based on the idea of _templates_ rather than _method calls_. Instead of calling a method with arguments, one makes a request by filling in a template and getting the client to make the request:
+It's based on the idea of _templates_ rather than _method calls_. Instead of calling a method with arguments, one makes a request by filling in a template and getting the client to make the request. Often there's not even anything to fill in:
 
 ```ruby
 require 'rubycouch'
@@ -46,7 +46,7 @@ At some point, this will hopefully make it simpler to use different HTTP librari
 
 ## The API
 
-I'll document the full API at some point, but for now, check the source code in the `lib/rubycoucy/operations` folder for a list of the operations you can do. Most operations don't actually have a full method compliment for the query parameters they accept. Instead, use `merge_query_params` on the operation, for example, `merge_query_params({:include_docs=>true})`.
+I'll document the full API at some point, but for now, check the source code in the `lib/rubycouch/operations` folder for a list of the operations you can do. Most operations don't actually have a full method compliment for the query parameters they accept. Instead, use `merge_query_params` on the operation, for example, `merge_query_params({:include_docs=>true})`.
 
 Some things deserve a couple more notes.
 
