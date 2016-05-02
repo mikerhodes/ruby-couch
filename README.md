@@ -34,7 +34,17 @@ Features:
 
 ## Incompleteness
 
-Right now the library is basically a demo. However, it should be fairly obvious how to add operations and at least test their transformation into request templates, so I'm more than happy to accept PRs if the idea of the library intrigues you and you want to use it for your own projects.
+Right now the library has fairly incomplete API support, though should be enough for simple uses:
+
+- Document: `GET`, `PUT` (including streaming), `DELETE`.
+- Attachment: `GET`, `PUT` (including streaming), `DELETE`.
+- Views: Query via `GET`, including streaming response rows.
+- Databases: Create, Delete, Get info, List documents.
+- Instance: Get info, List databases.
+
+Most of these don't have much in the way of query string parameter support, but do support adding parameters via `merge_query_items` which makes most things work fine.
+
+However, one aim of the template-based approach is to make adding support for new requests quite simple, and I think most of the patterns for any request are in place now. If you want to try out the library, I more than welcome PRs to fill in the gaps if the idea of the library intrigues you and you want to use it for your own projects.
 
 ## Benefits
 
