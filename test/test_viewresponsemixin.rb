@@ -9,9 +9,11 @@ class ViewResponseMixinNonStreaming < Minitest::Test
     def initialize(code, couch_response)
       @code = code
       @body = couch_response
+      @content_type = 'application/json'
     end
     attr_reader :code
     attr_reader :body
+    attr_reader :content_type
   end
 
   def test_non_streaming_reponse

@@ -47,7 +47,7 @@ end
 def make_couch_response(response, body=nil)
   body = if body then body else response.body end
   success = (response.code.to_i >= 200 and response.code.to_i < 300)
-  CouchResponse.new(response.code, body, success, response['Content-Type'])
+  CouchResponse.new(response.code, body, success, response.content_type)
 end
 
 ##
