@@ -36,8 +36,8 @@ Features:
 
 Right now the library has fairly incomplete API support, though should be enough for simple uses:
 
-- Document: `GET`, `PUT` (including streaming), `DELETE`.
-- Attachment: `GET`, `PUT` (including streaming), `DELETE`.
+- Document: `GET` (including streaming), `PUT` (including streaming), `DELETE`.
+- Attachment: `GET` (including streaming), `PUT` (including streaming), `DELETE`.
 - Views: Query via `GET`, including streaming response rows.
 - Databases: Create, Delete, Get info, List documents.
 - Instance: Get info, List databases.
