@@ -2,6 +2,10 @@
 require 'rubycouch/operations/base'
 require 'rubycouch/operations/responses'
 
+##
+# Get a document.
+#
+# There are a bunch of options this class doesn't yet cover.
 class GetDocument
 
   include QueryStringMixin
@@ -63,6 +67,8 @@ class PutDocument
 
 end
 
+##
+# Delete (tombstone) a document.
 class DeleteDocument
 
   include QueryStringMixin

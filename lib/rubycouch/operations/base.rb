@@ -1,6 +1,7 @@
 #
 # This file contains shared definition code and mixins.
 #
+# TODO Should have a header mixin
 
 require 'cgi'
 
