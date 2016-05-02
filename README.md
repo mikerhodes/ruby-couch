@@ -20,17 +20,17 @@ Features:
 - Simple one-to-one mapping between HTTP requests and library calls.
 - Almost all methods support streaming response data, either raw data or individual results for requests like views, using a simple block mechanism:
 
-        ```ruby
-        f = open('sample.flv')
-        begin
-          req = GetAttachment.new('elephant', 'sample.flv')
-          database.make_request(req) do |segment|
-            f.write(segment)
-          end
-        ensure
-          f.close()
-        end
-        ```
+    ```ruby
+    f = open('sample.flv')
+    begin
+      req = GetAttachment.new('elephant', 'sample.flv')
+      database.make_request(req) do |segment|
+        f.write(segment)
+      end
+    ensure
+      f.close()
+    end
+    ```
 
 ## Incompleteness
 
