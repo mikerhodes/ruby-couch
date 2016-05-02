@@ -33,7 +33,7 @@ class ViewResponseMixinNonStreaming < Minitest::Test
     end.new
 
     handler = view_mixin.response_handler
-    response = handler.call MockResponse.new("200", couch_response)
+    response = handler.call MockResponse.new("200", couch_response), nil
 
     assert_equal "200", response.code
     assert_equal couch_response, response.raw
@@ -53,7 +53,7 @@ class ViewResponseMixinNonStreaming < Minitest::Test
     end.new
 
     handler = view_mixin.response_handler
-    response = handler.call MockResponse.new("404", couch_response)
+    response = handler.call MockResponse.new("404", couch_response), nil
 
     assert_equal "404", response.code
     assert_equal couch_response, response.raw

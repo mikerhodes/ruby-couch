@@ -15,6 +15,23 @@ response.json
 
 This is intended to make the calls being made over the network more explicit, but also has the side-effect of being a bit like SQL, where one composes a query and then makes it.
 
+Features:
+
+- Simple one-to-one mapping between HTTP requests and library calls.
+- Almost all methods support streaming response data, either raw data or individual results for requests like views, using a simple block mechanism:
+
+        ```ruby
+        f = open('sample.flv')
+        begin
+          req = GetAttachment.new('elephant', 'sample.flv')
+          database.make_request(req) do |segment|
+            f.write(segment)
+          end
+        ensure
+          f.close()
+        end
+        ```
+
 ## Incompleteness
 
 Right now the library is basically a demo. However, it should be fairly obvious how to add operations and at least test their transformation into request templates, so I'm more than happy to accept PRs if the idea of the library intrigues you and you want to use it for your own projects.
@@ -73,10 +90,38 @@ end
 
 Broadly speaking, it'll only be attachments that return non-JSON responses, though if your CouchDB instance is behind a proxy, it might send back something funny in error cases (e.g., HAProxy's default "503: no backend" error if your instance is down is HTML I think).
 
-Where the comment by `raw` says "mostly", it means that some requests have special ways of handling the response, mostly to improve memory usage. Right now those are:
+Where `raw` says "mostly", most request types provide the facility to stream response data to a block passed to `make_request`. Passing the block causes the response handling code to discard the body after passing it to the block, so `raw` doesn't have any content; the data is already consumed and discarded.
 
-- View have a streaming mode, which results in `raw` not containing the results from the `rows` field of the response (so we don't have to buffer them into memory).
-- At some point, I want to add a streaming attachment handler. When I do, `raw` will be blank as the streaming handler will pass the content onto a callback rather than returning in the `make_request` response.
+Some request types, such as views, have special handling for the block passed to `make_request` where such handling makes more sense than passing back raw stream data.
+
+### Streaming data
+
+The standard behaviour of passing a block to make_request streams the data to the block. For small documents, this probably isn't at all necessary but for large documents and particularly attachments this might be sensible:
+
+```ruby
+doc = ''
+database.make_request(GetDocument.new('elephant')) do |segment|
+  doc += segment
+end
+puts sprintf("\nStreamed return value: %s", JSON.parse(doc))
+# => {"id"=>"kookaburra",...}
+```
+
+Of course, it's probably wiser to save the data to a file for later processing or whatever:
+
+```ruby
+f = open('sample.flv')
+begin
+  req = GetAttachment.new('elephant', 'sample.flv')
+  database.make_request(req) do |segment|
+    f.write(segment)
+  end
+ensure
+  f.close()
+end
+```
+
+Unfortunately right now you can't upload a document or file using something so elegant.
 
 ### Views
 
@@ -97,15 +142,14 @@ client.database('animaldb')
 # {"id"=>"aardvark", "key"=>"Orycteropus afer", "value"=>16}]}
 ```
 
-In the streaming version, one provides a callback as a Proc or Lambda. The Proc is called for every row in the result set. This consumes each row, so by the time you get the result of the `make_request` call, the `rows` field is empty:
+In the streaming version, one provides a block taking a result row and an index to `make_request`. The block is called for every row in the result set. This consumes each row, so by the time you get the result of the `make_request` call, the `rows` field is empty:
 
 ```ruby
 get_view = GetView.new('views101', 'latin_name')
-get_view.row_callback = lambda { |row, idx|
-    puts sprintf("  %d: %s", idx, row)
-    # => 0: {"id"=>"kookaburra", "key"=>"Dacelo novaeguineae", "value"=>19}
-    # and so on. `row` is always decoded JSON.
-}
-client.database('animaldb').make_request(get_view).json
+client.database('animaldb').make_request(get_view) do |row, idx|
+  puts sprintf("  %d: %s", idx, row)
+  # => 0: {"id"=>"kookaburra", "key"=>"Dacelo novaeguineae", "value"=>19}
+  # and so on. `row` is always decoded JSON.
+end.json
 # => {"total_rows"=>5, "offset"=>0,"rows"=>[]}
 ```

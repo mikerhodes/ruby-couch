@@ -22,13 +22,13 @@ class CouchClient
     Database.new(self, name)
   end
 
-  def make_request(request_definition)
+  def make_request(request_definition, &block)
     template = RequestTransform.make_template(
       @instance_root_uri,
       request_definition
     )
     template.basic_auth = @basic_auth if @basic_auth
-    @requestor.processed_response_for(template)
+    @requestor.response_for(template, block)
   end
 
 end
@@ -40,12 +40,12 @@ class Database
     @name = name
   end
 
-  def make_request(request_definition)
+  def make_request(request_definition, &block)
     if not request_definition.respond_to?(:database_name=) then
       raise 'Database requests must respond to :database_name'
     end
     request_definition.database_name = @name
-    @client.make_request(request_definition)
+    @client.make_request(request_definition, &block)
   end
 
 end

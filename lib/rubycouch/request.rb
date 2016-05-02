@@ -35,14 +35,16 @@ end
 
 class Requestor
 
-  def processed_response_for(template)
+  ##
+  # Execute the request, passing a possible callback onto the response
+  # handler.
+  #
+  # If used, the callback is expected to be a Proc object, such as one created
+  # by &block.
+  def response_for(template, callback)
     raise "processed_response_for() requires `template` not be nil" unless template
     raise "processed_response_for() requires `template.response_handler` not be nil" unless template.response_handler
-    # template.response_handler.call(response_for(template))
-    response_for(template)
-  end
 
-  def response_for(template)
     client = Net::HTTP.start(
               template.host, template.port,
               :use_ssl => template.scheme == 'https',
@@ -52,7 +54,7 @@ class Requestor
     result = nil
     # Called with a block to allow response handler to stream response body
     client.request(request) do |response|
-      result = template.response_handler.call(response)
+      result = template.response_handler.call(response, callback)
     end
     client.finish()
     result

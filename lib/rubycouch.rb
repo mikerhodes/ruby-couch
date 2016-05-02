@@ -35,6 +35,16 @@ class RubyCouch
     print "\n\n====== animaldb -- GetDocument(elephant) ======\n"
     print database.make_request(GetDocument.new('elephant')).json
 
+    # For most requests, providing a block streams the response data
+    # to that block, and doesn't provide the data in the make_request
+    # return value.
+    print "\n\n====== animaldb -- GetDocument(elephant) -- stream ======\n"
+    doc = ''
+    print (database.make_request(GetDocument.new('elephant')) do |data|
+      doc += data
+    end)
+    puts sprintf("\nStreamed return value: %s", JSON.parse(doc))
+
     print "\n\n====== animaldb -- GetView(view101) ======\n"
     print database.make_request(GetView.new('views101', 'latin_name')).json
 
@@ -46,10 +56,9 @@ class RubyCouch
     get_view = GetView.new('views101', 'latin_name')
     get_view.merge_query_items({:include_docs => true})
     puts "Rows:"
-    get_view.row_callback = lambda { |row, idx|
-        puts sprintf("  %d: %s", idx, row)
-    }
-    return_value = database.make_request(get_view)
+    return_value = database.make_request(get_view) do |row, idx|
+      puts sprintf("  %d: %s", idx, row)
+    end
     puts sprintf("Return value:\n  %s", return_value.json)
 
     print "\n\n====== animaldb -- GetView Reduced(view101) ======\n"

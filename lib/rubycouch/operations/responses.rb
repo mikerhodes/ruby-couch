@@ -54,10 +54,22 @@ end
 # Provides a simple response handler that just wraps a ruby Net::HTTP
 # response into something more CouchDB-friendly.
 #
+# If a callback is provided, it will stream the response data to the
+# callback method.
 module SimpleResponseMixin
 
   def response_handler
-    lambda { |response| make_couch_response response }
+    lambda { |response, callback|
+      # If a callback is provided, stream the response into that callback
+      if callback
+        response.read_body do |segment|
+          callback.call segment
+        end
+        make_couch_response response, ''
+      else
+        make_couch_response response
+      end
+    }
   end
 
 end
@@ -102,33 +114,20 @@ module ViewStreamingResponseMixin
   # be better than this assumption.
 
   def response_handler
-
-    if @row_callback
-
-      # Save the current callback so it doesn't change
-      # after we ask for the handler.
-      inner_row_callback = @row_callback
-
-      lambda { |response|
-
+    lambda { |response, callback|
+      if callback
         # Return failure if needed
         return make_couch_response(response) unless response.kind_of?(Net::HTTPSuccess)
 
         non_row_body = ViewStreamingResponseMixin_stream_response(
           LineReader,
           response,
-          inner_row_callback)
+          callback)
         make_couch_response(response, non_row_body)
-      }
-
-    else
-
-      lambda { |response|
+      else
         make_couch_response(response)
-      }
-
-    end
-
+      end
+    }
   end
 
   ##
