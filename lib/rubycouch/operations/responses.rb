@@ -97,24 +97,19 @@ module ViewStreamingResponseMixin
 
     if not @row_callback.nil?
 
+      # Save the current callback so it doesn't change
+      # after we ask for the handler.
+      inner_row_callback = @row_callback
+
       lambda { |response|
 
-        # We don't parse the string
+        # Return failure if needed
         return make_couch_response(response) unless response.kind_of?(Net::HTTPSuccess)
 
-        non_row_body = ''
-        row_idx = 0
-        LineReader.read_body response do |line|
-          line = line.strip
-          if line.start_with? '{"key":' or line.start_with? '{"id":'
-            # A result row; send to the row_callback
-            row_callback.call JSON.parse(line.chomp(',')), row_idx
-            row_idx += 1
-          else
-            # Not a row, it goes into the main return value
-            non_row_body += line
-          end
-        end
+        non_row_body = ViewStreamingResponseMixin_stream_response(
+          LineReader,
+          response,
+          inner_row_callback)
         make_couch_response(response, non_row_body)
       }
 
@@ -126,6 +121,28 @@ module ViewStreamingResponseMixin
 
     end
 
+  end
+
+  ##
+  # Processes a response body in a streaming manner using `line_reader_class`
+  # to split the body into lines and calling back via `callback` per row.
+  # Returns the remaining string content once row array contents have been
+  # removed.
+  def ViewStreamingResponseMixin_stream_response(line_reader_class, response, callback)
+    non_row_body = ''
+    row_idx = 0
+    line_reader_class.read_body response do |line|
+      line = line.strip
+      if line.start_with? '{"key":' or line.start_with? '{"id":'
+        # A result row; send to the callback
+        callback.call JSON.parse(line.chomp(',')), row_idx
+        row_idx += 1
+      else
+        # Not a row, it goes into the main return value
+        non_row_body += line
+      end
+    end
+    non_row_body
   end
 
 end
