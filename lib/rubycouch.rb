@@ -19,24 +19,24 @@ class RubyCouch
     # client.basic_auth 'username', 'password'
 
     print "====== InstanceInfo ======\n"
-    print client.make_request(InstanceInfo.new)
+    print client.make_request(InstanceInfo.new).json
 
     print "\n\n====== AllDbs ======\n"
-    print client.make_request(AllDbs.new)
+    print client.make_request(AllDbs.new).json
 
     database = client.database('animaldb')
 
     print "\n\n====== animaldb -- DatabaseInfo ======\n"
-    print database.make_request(DatabaseInfo.new)
+    print database.make_request(DatabaseInfo.new).json
 
     print "\n\n====== animaldb -- AllDocs ======\n"
-    print database.make_request(AllDocs.new)
+    print database.make_request(AllDocs.new).json
 
     print "\n\n====== animaldb -- GetDocument(elephant) ======\n"
-    print database.make_request(GetDocument.new('elephant'))
+    print database.make_request(GetDocument.new('elephant')).json
 
     print "\n\n====== animaldb -- GetView(view101) ======\n"
-    print database.make_request(GetView.new('views101', 'latin_name'))
+    print database.make_request(GetView.new('views101', 'latin_name')).json
 
     # Using the callback/iter approach means the entire response
     # isn't stored into memory. Instead, result rows are passed to
@@ -50,17 +50,17 @@ class RubyCouch
         puts sprintf("  %d: %s", idx, row)
     }
     return_value = database.make_request(get_view)
-    puts sprintf("Return value:\n  %s", return_value)
+    puts sprintf("Return value:\n  %s", return_value.json)
 
     print "\n\n====== animaldb -- GetView Reduced(view101) ======\n"
     get_view = GetView.new('views101', 'latin_name_count')
     get_view.merge_query_items({:reduce => true})
-    print database.make_request(get_view)
+    print database.make_request(get_view).json
 
     # This database probably doesn't exist so it'll give an error
     database = client.database('animaldsdfsdfb')
     print "\n\n====== animaldsdfsdfb -- DatabaseInfo ======\n"
-    print database.make_request(DatabaseInfo.new)
+    print database.make_request(DatabaseInfo.new).json
 
     print "\n\ndone.\n"
   end

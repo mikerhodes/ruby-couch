@@ -50,6 +50,29 @@ I'll document the full API at some point, but for now, check the source code in 
 
 Some things deserve a couple more notes.
 
+### Request return values
+
+All calls to `make_request` return an object of the following form:
+
+```ruby
+Class.new do
+  attr_reader :code  # HTTP status code, as string
+  attr_reader :raw   # response body (mostly)
+  attr_reader :success  # whether the request succeeded
+  attr_reader :content_type  # content type for `raw`
+
+  def json
+    if content_type.downcase.eql? 'application/json'
+      JSON.parse(raw)
+    else
+      raise "Non-JSON content type in response; cannot convert."
+    end
+  end
+end
+```
+
+Broadly speaking, it'll only be attachments that return non-JSON responses, though if your CouchDB instance is behind a proxy, it might send back something funny in error cases (e.g., HAProxy's default "503: no backend" error if your instance is down is HTML I think).
+
 ### Views
 
 Views can be called in either a simple or streaming manner. Use streaming for retrieving larger result sets, as the code avoids buffering the response in memory.
