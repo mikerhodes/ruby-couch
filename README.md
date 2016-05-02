@@ -74,7 +74,7 @@ All calls to `make_request` return an object of the following form:
 ```ruby
 Class.new do
   attr_reader :code  # HTTP status code, as string
-  attr_reader :raw   # response body (mostly)
+  attr_reader :raw   # response body (aside from when streaming)
   attr_reader :success  # whether the request succeeded
   attr_reader :content_type  # content type for `raw`
 
@@ -90,7 +90,7 @@ end
 
 Broadly speaking, it'll only be attachments that return non-JSON responses, though if your CouchDB instance is behind a proxy, it might send back something funny in error cases (e.g., HAProxy's default "503: no backend" error if your instance is down is HTML I think).
 
-Where `raw` says "mostly", most request types provide the facility to stream response data to a block passed to `make_request`. Passing the block causes the response handling code to discard the body after passing it to the block, so `raw` doesn't have any content; the data is already consumed and discarded.
+Where `raw` says "aside from when streaming", most request types provide the facility to stream response data to a block passed to `make_request`. Passing the block causes the response handling code to discard the body after passing it to the block, so `raw` doesn't have any content; the data is already consumed and discarded.
 
 Some request types, such as views, have special handling for the block passed to `make_request` where such handling makes more sense than passing back raw stream data.
 
