@@ -73,6 +73,11 @@ end
 
 Broadly speaking, it'll only be attachments that return non-JSON responses, though if your CouchDB instance is behind a proxy, it might send back something funny in error cases (e.g., HAProxy's default "503: no backend" error if your instance is down is HTML I think).
 
+Where the comment by `raw` says "mostly", it means that some requests have special ways of handling the response, mostly to improve memory usage. Right now those are:
+
+- View have a streaming mode, which results in `raw` not containing the results from the `rows` field of the response (so we don't have to buffer them into memory).
+- At some point, I want to add a streaming attachment handler. When I do, `raw` will be blank as the streaming handler will pass the content onto a callback rather than returning in the `make_request` response.
+
 ### Views
 
 Views can be called in either a simple or streaming manner. Use streaming for retrieving larger result sets, as the code avoids buffering the response in memory.
