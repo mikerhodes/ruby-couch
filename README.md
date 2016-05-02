@@ -84,13 +84,12 @@ client.database('animaldb')
     .make_request(GetView.new('views101', 'latin_name'))
     .json
 # =>
-# "{"total_rows":5,"offset":0,"rows":[
-# {"id":"kookaburra","key":"Dacelo novaeguineae","value":19},
-# {"id":"snipe","key":"Gallinago gallinago","value":19},
-# {"id":"llama","key":"Lama glama","value":10},
-# {"id":"badger","key":"Meles meles","value":11},
-# {"id":"aardvark","key":"Orycteropus afer","value":16}
-# ]}
+# {"total_rows"=>5, "offset"=>0, "rows"=>[
+# {"id"=>"kookaburra", "key"=>"Dacelo novaeguineae", "value"=>19}, 
+# {"id"=>"snipe", "key"=>"Gallinago gallinago", "value"=>19}, 
+# {"id"=>"llama", "key"=>"Lama glama", "value"=>10}, 
+# {"id"=>"badger", "key"=>"Meles meles", "value"=>11}, 
+# {"id"=>"aardvark", "key"=>"Orycteropus afer", "value"=>16}]}
 ```
 
 In the streaming version, one provides a callback as a Proc or Lambda. The Proc is called for every row in the result set. This consumes each row, so by the time you get the result of the `make_request` call, the `rows` field is empty:
@@ -99,9 +98,9 @@ In the streaming version, one provides a callback as a Proc or Lambda. The Proc 
 get_view = GetView.new('views101', 'latin_name')
 get_view.row_callback = lambda { |row, idx|
     puts sprintf("  %d: %s", idx, row)
-    # => 0: {"id"=>"kookaburra", "key"=>"Dacelo novaeguineae","value":19}
+    # => 0: {"id"=>"kookaburra", "key"=>"Dacelo novaeguineae", "value"=>19}
     # and so on. `row` is always decoded JSON.
 }
 client.database('animaldb').make_request(get_view).json
-# => {"total_rows":5,"offset":0,"rows":[]}
+# => {"total_rows"=>5, "offset"=>0,"rows"=>[]}
 ```
