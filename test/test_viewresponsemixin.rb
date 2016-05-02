@@ -1,7 +1,71 @@
 require 'minitest/autorun'
 require 'rubycouch/operations/responses'
 
-class ViewResponseMixin < Minitest::Test
+class ViewResponseMixinNonStreaming < Minitest::Test
+
+  # A bit white-box, we know the view handler only uses these
+  # methods on the response object for the non-streaming case.
+  class MockResponse
+    def initialize(code, couch_response)
+      @code = code
+      @body = couch_response
+    end
+    attr_reader :code
+    attr_reader :body
+  end
+
+  def test_non_streaming_reponse
+
+    couch_response = %q(
+    {"total_rows":5,"offset":0,"rows":[
+    {"id":"kookaburra","key":"Dacelo novaeguineae","value":19},
+    {"id":"snipe","key":"Gallinago gallinago","value":19},
+    {"id":"llama","key":"Lama glama","value":10},
+    {"id":"badger","key":"Meles meles","value":11},
+    {"id":"aardvark","key":"Orycteropus afer","value":16}
+    ]}
+    )
+
+    view_mixin = Class.new do
+      include ViewStreamingResponseMixin
+    end.new
+
+    handler = view_mixin.response_handler
+    response = handler.call MockResponse.new("200", couch_response)
+
+    assert_equal "200", response.code
+    assert_equal couch_response, response.raw
+    assert_equal JSON.parse(couch_response), response.json
+    assert_equal true, response.success
+
+  end
+
+  def test_non_streaming_reponse_404
+
+    couch_response = %q(
+    {"error":"not_found","reason":"missing_named_view"}
+    )
+
+    view_mixin = Class.new do
+      include ViewStreamingResponseMixin
+    end.new
+
+    handler = view_mixin.response_handler
+    response = handler.call MockResponse.new("404", couch_response)
+
+    assert_equal "404", response.code
+    assert_equal couch_response, response.raw
+    assert_equal JSON.parse(couch_response), response.json
+    assert_equal false, response.success
+
+  end
+
+end
+
+class ViewResponseMixinStreaming < Minitest::Test
+
+  # TODO Would be nice here to use the handler, like the non-streaming
+  # tests, but haven't worked out how to do that successfully yet.
 
   def test_streaming_response_empty_result_set
 
@@ -10,7 +74,7 @@ class ViewResponseMixin < Minitest::Test
     ]}
     )
 
-    actual_rows, non_row_body = process_response(couch_response)
+    actual_rows, non_row_body = stream_response(couch_response)
 
     # Asserts
     assert_equal JSON.parse(couch_response)['rows'], actual_rows
@@ -30,7 +94,7 @@ class ViewResponseMixin < Minitest::Test
     ]}
     )
 
-    actual_rows, non_row_body = process_response(couch_response)
+    actual_rows, non_row_body = stream_response(couch_response)
 
     # Asserts
     assert_equal JSON.parse(couch_response)['rows'], actual_rows
@@ -50,7 +114,7 @@ class ViewResponseMixin < Minitest::Test
     ]}
     )
 
-    actual_rows, non_row_body = process_response(couch_response)
+    actual_rows, non_row_body = stream_response(couch_response)
 
     # Asserts
     assert_equal JSON.parse(couch_response)['rows'], actual_rows
@@ -60,7 +124,7 @@ class ViewResponseMixin < Minitest::Test
 
   ##
   # The boiler-plate of setting up the mocks and processing the response
-  def process_response(couch_response)
+  def stream_response(couch_response)
 
     # Should be asked to read lines from mocked_response
     line_reader_class = Class.new do
