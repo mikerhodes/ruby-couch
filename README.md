@@ -31,6 +31,10 @@ Features:
       f.close()
     end
     ```
+    
+## Installing
+
+Right now, I guess it's copy the code into your application. I should learn how to publish gems; bear with me a while.
 
 ## Incompleteness
 
