@@ -126,7 +126,8 @@ class TransformsTest < Minitest::Test
   end
 
   def test_put_document_with_revid_template
-    put_document = PutDocument.new('test-doc-1', '{"hello": "world"}')
+    put_document = PutDocument.new('test-doc-1')
+    put_document.body = '{"hello": "world"}'
     put_document.rev_id = '1-asdfsfd'
     put_document.database_name = 'hola'
     template = RequestTransform.make_template(
@@ -145,7 +146,8 @@ class TransformsTest < Minitest::Test
   end
 
   def test_put_document_without_revid_template
-    put_document = PutDocument.new('test-doc-1', '{"hello": "world"}')
+    put_document = PutDocument.new('test-doc-1')
+    put_document.body = '{"hello": "world"}'
     put_document.database_name = 'hola'
     template = RequestTransform.make_template(
       @instance_root_uri,
@@ -162,7 +164,8 @@ class TransformsTest < Minitest::Test
   end
 
   def test_put_document_with_contenttype_template
-    put_document = PutDocument.new('test-doc-1', '{"hello": "world"}')
+    put_document = PutDocument.new('test-doc-1')
+    put_document.body = '{"hello": "world"}'
     put_document.database_name = 'hola'
     put_document.content_type = 'hola'
     template = RequestTransform.make_template(
@@ -177,6 +180,25 @@ class TransformsTest < Minitest::Test
     assert_equal 5984, template.port
     assert_equal '/hola/test-doc-1', template.path
     assert_equal '{"hello": "world"}', template.body
+  end
+
+  def test_put_document_with_stream_template
+    put_document = PutDocument.new('test-doc-1')
+    put_document.body_stream = StringIO.new('{"hello": "world"}')
+    put_document.database_name = 'hola'
+    template = RequestTransform.make_template(
+      @instance_root_uri,
+      put_document
+    )
+
+    assert_equal 'PUT', template.method
+    assert_equal 'http', template.scheme
+    assert_equal 'localhost', template.host
+    assert_equal 'application/json', template.content_type
+    assert_equal 5984, template.port
+    assert_equal '/hola/test-doc-1', template.path
+    assert_equal nil, template.body
+    assert_equal '{"hello": "world"}', template.body_stream.read()
   end
 
   def test_view_get_template
@@ -247,7 +269,8 @@ class TransformsTest < Minitest::Test
 
   def test_put_attachment_with_revid_template
     put_attachment = PutAttachment.new(
-      'test-doc-1', 'my-att.blah', 'text/plain', 'Hello world!')
+      'test-doc-1', 'my-att.blah', 'text/plain')
+    put_attachment.body = 'Hello world!'
     put_attachment.rev_id = '1-asdfsfd'
     put_attachment.database_name = 'hola'
     template = RequestTransform.make_template(
@@ -267,7 +290,8 @@ class TransformsTest < Minitest::Test
 
   def test_put_attachment_without_revid_template
     put_attachment = PutAttachment.new(
-      'test-doc-1', 'my-att.blah', 'text/plain', 'Hello world!')
+      'test-doc-1', 'my-att.blah', 'text/plain')
+    put_attachment.body = 'Hello world!'
     put_attachment.database_name = 'hola'
     template = RequestTransform.make_template(
       @instance_root_uri,
@@ -281,6 +305,26 @@ class TransformsTest < Minitest::Test
     assert_equal 5984, template.port
     assert_equal '/hola/test-doc-1/my-att.blah', template.path
     assert_equal 'Hello world!', template.body
+  end
+
+  def test_put_attachment_with_stream_template
+    put_attachment = PutAttachment.new(
+      'test-doc-1', 'my-att.blah', 'text/plain')
+    put_attachment.body_stream = StringIO.new('Hello world!')
+    put_attachment.database_name = 'hola'
+    template = RequestTransform.make_template(
+      @instance_root_uri,
+      put_attachment
+    )
+
+    assert_equal 'PUT', template.method
+    assert_equal 'http', template.scheme
+    assert_equal 'localhost', template.host
+    assert_equal 'text/plain', template.content_type
+    assert_equal 5984, template.port
+    assert_equal '/hola/test-doc-1/my-att.blah', template.path
+    assert_equal nil, template.body
+    assert_equal 'Hello world!', template.body_stream.read()
   end
 
 end

@@ -50,7 +50,8 @@ get_document.rev_id = '1-asdfsfd'  # ?rev_id=1-asdfsfd
 client.database('animaldb').make_request(get_document).json
 # => {"_id"=>"aardvark", "min_weight"=>40, "_rev"=>... }
 
-put_document = PutDocument.new('test-doc-1', '{"hello": "world"}')
+put_document = PutDocument.new('test-doc-1')
+put_document.body = '{"hello": "world"}'
 put_document.rev_id = '1-asdfsfd'  # ?rev_id=1-asdfsfd
 client.database('animaldb').make_request(put_document).json
 ```
@@ -96,6 +97,8 @@ Some request types, such as views, have special handling for the block passed to
 
 ### Streaming data
 
+#### Download
+
 The standard behaviour of passing a block to make_request streams the data to the block. For small documents, this probably isn't at all necessary but for large documents and particularly attachments this might be sensible:
 
 ```ruby
@@ -121,7 +124,18 @@ ensure
 end
 ```
 
-Unfortunately right now you can't upload a document or file using something so elegant.
+#### Upload
+
+To stream data when uploading, assign something responding to `read` to the `body_stream` attribute of a `PutDocument` or `PutAttachment` call:
+
+```ruby
+put_document = PutAttachment.new('test-doc-1', 'large_attachment.mp3')
+put_document.body_stream = File.open("/path/to/large/file")
+put_document.rev_id = '1-asdfsfd'  # ?rev_id=1-asdfsfd
+client.database('animaldb').make_request(put_document).json
+```
+
+Only one of `body` and `body_stream` should be assigned. The values assigned to these attributes are passed directly to `Net::HTTP::Put/Post`.
 
 ### Views
 

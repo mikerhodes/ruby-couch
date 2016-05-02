@@ -37,7 +37,8 @@ end
 # be.
 #
 # The body can be supplied as a string, or something JSON.dump() can process
-# into a string.
+# into a string. Alternatively, supply a `body_stream` which is an IO-like
+# object.
 class PutDocument
 
   include QueryStringMixin
@@ -45,12 +46,16 @@ class PutDocument
   include SimpleResponseMixin
 
   attr_reader :body
+  attr_accessor :body_stream
   attr_accessor :content_type
 
-  def initialize(doc_id, body)
+  def initialize(doc_id)
     @doc_id = doc_id
-    @body = if body.is_a? String then body else JSON.dump(body) end
     @content_type = 'application/json'
+  end
+
+  def body=(value)
+    @body = if value.is_a? String then value else JSON.dump(value) end
   end
 
   def method

@@ -12,6 +12,7 @@ class RequestTemplate
   attr_accessor :path
   attr_accessor :query
   attr_accessor :body
+  attr_accessor :body_stream
   attr_accessor :content_type
   attr_accessor :accept
   attr_accessor :response_handler
@@ -25,6 +26,7 @@ class RequestTemplate
     @path = uri.path
     @query = uri.query
     @body = nil
+    @body_stream = nil
     @content_type = 'application/json'
     @accept = 'application/json'
     @response_handler = nil
@@ -79,14 +81,16 @@ class Requestor
       raise "Unsupported HTTP method: #{template.method}"
     end
 
-    request.body = template.body if template.body
+    request['Accept'] = template.accept
     request.content_type = template.content_type
     request.basic_auth(
       template.basic_auth[:username],
       template.basic_auth[:password]
     ) if template.basic_auth
 
-    request['Accept'] = template.accept
+    # Rely on Net::HTTP's behaviour if we end up assigning both
+    request.body = template.body if template.body
+    request.body_stream = template.body_stream if template.body_stream
 
     request
   end
