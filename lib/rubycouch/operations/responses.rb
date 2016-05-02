@@ -95,7 +95,7 @@ module ViewStreamingResponseMixin
 
   def response_handler
 
-    if not @row_callback.nil?
+    if @row_callback
 
       # Save the current callback so it doesn't change
       # after we ask for the handler.
