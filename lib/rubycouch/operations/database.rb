@@ -5,7 +5,7 @@ require 'rubycouch/operations/responses'
 class DatabaseInfo
 
   include DatabaseRequestMixin
-  include SimpleJsonResponseMixin
+  include SimpleResponseMixin
 
   def method
     'GET'

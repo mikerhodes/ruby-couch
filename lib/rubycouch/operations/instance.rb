@@ -4,7 +4,7 @@ require 'rubycouch/operations/responses'
 
 class InstanceInfo
 
-  include SimpleJsonResponseMixin
+  include SimpleResponseMixin
 
   def method
     'GET'
@@ -18,7 +18,7 @@ end
 
 class AllDbs
 
-  include SimpleJsonResponseMixin
+  include SimpleResponseMixin
 
   def method
     'GET'

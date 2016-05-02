@@ -31,7 +31,11 @@ class CouchResponse
   end
 
   def json
-    JSON.parse(raw)
+    if content_type.downcase.eql? 'application/json'
+      JSON.parse(raw)
+    else
+      raise "Non-JSON content type in response; cannot convert."
+    end
   end
 
   def to_s
@@ -47,10 +51,10 @@ def make_couch_response(response, body=nil)
 end
 
 ##
-# Module which provides the simple response behaviour of decoding
-# JSON into a hash/array/primitive.
+# Provides a simple response handler that just wraps a ruby Net::HTTP
+# response into something more CouchDB-friendly.
 #
-module SimpleJsonResponseMixin
+module SimpleResponseMixin
 
   def response_handler
     lambda { |response| make_couch_response response }

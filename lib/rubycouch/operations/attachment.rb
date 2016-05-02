@@ -3,8 +3,11 @@ require 'rubycouch/operations/responses'
 
 class GetAttachment
 
+  # TODO callback for streaming an attachment in chunks
+
   include QueryStringMixin
   include DatabaseRequestMixin
+  include SimpleResponseMixin
 
   def initialize(doc_id, attachment_name)
     @doc_id = doc_id
@@ -23,18 +26,6 @@ class GetAttachment
     "/#{@doc_id}/#{@attachment_name}"
   end
 
-  ##
-  # Need a custom response handler as response isn't going to be JSON.
-  def response_handler
-    lambda { |response|
-      result = make_couch_response(response)
-      def result.json
-        raise "Attachments can't be automatically converted to JSON!"
-      end
-      result
-    }
-  end
-
 end
 
 ##
@@ -46,7 +37,7 @@ class PutAttachment
 
   include QueryStringMixin
   include DatabaseRequestMixin
-  include SimpleJsonResponseMixin
+  include SimpleResponseMixin
 
   attr_reader :body
   attr_accessor :content_type
@@ -76,7 +67,7 @@ class DeleteAttachment
 
   include QueryStringMixin
   include DatabaseRequestMixin
-  include SimpleJsonResponseMixin
+  include SimpleResponseMixin
 
   def initialize(doc_id, attachment_name, rev_id)
     @doc_id = doc_id
