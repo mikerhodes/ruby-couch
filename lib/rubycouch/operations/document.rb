@@ -31,6 +31,9 @@ end
 #
 # For update, rev_id should be supplied. For create, obviously it shouldn't
 # be.
+#
+# The body can be supplied as a string, or something JSON.dump() can process
+# into a string.
 class PutDocument
 
   include QueryStringMixin
@@ -42,7 +45,7 @@ class PutDocument
 
   def initialize(doc_id, body)
     @doc_id = doc_id
-    @body = body
+    @body = if body.is_a? String then body else JSON.dump(body) end
     @content_type = 'application/json'
   end
 
