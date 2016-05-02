@@ -21,11 +21,13 @@ class CouchResponse
   attr_reader :code
   attr_reader :raw
   attr_reader :success
+  attr_reader :content_type
 
-  def initialize(code, raw, success)
+  def initialize(code, raw, success, content_type)
     @code = code
     @raw = raw
     @success = success
+    @content_type = content_type
   end
 
   def json
@@ -33,14 +35,15 @@ class CouchResponse
   end
 
   def to_s
-    "<CouchResponse code=\"#{@code}\", success=#{@success}, raw=\"#{@raw}\">"
+    "<CouchResponse code=\"#{@code}\", success=#{@success}," +
+    " raw=\"#{@raw}\" content_type=\"#{@content_type}\">"
   end
 end
 
 def make_couch_response(response, body=nil)
   body = if body then body else response.body end
   success = (response.code.to_i >= 200 and response.code.to_i < 300)
-  CouchResponse.new(response.code, body, success)
+  CouchResponse.new(response.code, body, success, response['Content-Type'])
 end
 
 ##

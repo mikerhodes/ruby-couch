@@ -4,6 +4,7 @@ require 'uri'
 require 'json'
 
 require 'rubycouch/client'
+require 'rubycouch/operations/attachment'
 require 'rubycouch/operations/base'
 require 'rubycouch/operations/database'
 require 'rubycouch/operations/document'
