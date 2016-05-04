@@ -46,6 +46,41 @@ module QueryStringMixin
 end
 
 ##
+# Handles adding headers to requests.
+#
+# Adds a `header_items` and `merge_header_items` methods for public used,
+# aswell as an internal `ensure_header_items` method.
+#
+module HeadersMixin
+
+  ##
+  # Return headers for use in the request.
+  #
+  def header_items
+    ensure_header_items
+    @HeadersMixin_header_items
+  end
+
+
+  ##
+  # Merge a hash of headers into the operation's.
+  #
+  # Can be used to add custom headers to the operation.
+  #
+  # `items` is a headers hash, { "My-Header"=>"MyValue" }
+  #
+  def merge_header_items(items)
+    ensure_header_items
+    @HeadersMixin_header_items.merge!(items)
+  end
+
+  def ensure_header_items
+    @HeadersMixin_header_items = {} if not @HeadersMixin_header_items
+  end
+
+end
+
+##
 # Add `database_name=` and an implementation of `path` that munges the
 # database name into the path.
 #

@@ -8,6 +8,7 @@ class GetAttachment
   include QueryStringMixin
   include DatabaseRequestMixin
   include SimpleResponseMixin
+  include HeadersMixin
 
   def initialize(doc_id, attachment_name)
     @doc_id = doc_id
@@ -41,6 +42,7 @@ class PutAttachment
   include QueryStringMixin
   include DatabaseRequestMixin
   include SimpleResponseMixin
+  include HeadersMixin
 
   attr_accessor :body
   attr_accessor :body_stream
@@ -71,6 +73,7 @@ class DeleteAttachment
   include QueryStringMixin
   include DatabaseRequestMixin
   include SimpleResponseMixin
+  include HeadersMixin
 
   def initialize(doc_id, attachment_name, rev_id)
     @doc_id = doc_id

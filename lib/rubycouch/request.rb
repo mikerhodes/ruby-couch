@@ -17,6 +17,7 @@ class RequestTemplate
   attr_accessor :accept
   attr_accessor :response_handler
   attr_accessor :basic_auth
+  attr_accessor :header_items
 
   def initialize(uri)
     @method = 'GET'
@@ -31,6 +32,7 @@ class RequestTemplate
     @accept = 'application/json'
     @response_handler = nil
     @basic_auth = nil
+    @header_items = nil
   end
 
 end
@@ -81,12 +83,20 @@ class Requestor
       raise "Unsupported HTTP method: #{template.method}"
     end
 
+    # For headers, first set those we have attrs for, then allow
+    # for overriding with the explicit header_items field.
     request['Accept'] = template.accept
     request.content_type = template.content_type
     request.basic_auth(
       template.basic_auth[:username],
       template.basic_auth[:password]
     ) if template.basic_auth
+
+    if template.header_items
+      template.header_items.each do |k,v|
+        request[k] = v
+      end
+    end
 
     # Rely on Net::HTTP's behaviour if we end up assigning both
     request.body = template.body if template.body

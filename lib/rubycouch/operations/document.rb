@@ -11,6 +11,7 @@ class GetDocument
   include QueryStringMixin
   include DatabaseRequestMixin
   include SimpleResponseMixin
+  include HeadersMixin
 
   def initialize(doc_id)
     @doc_id = doc_id
@@ -44,6 +45,7 @@ class PutDocument
   include QueryStringMixin
   include DatabaseRequestMixin
   include SimpleResponseMixin
+  include HeadersMixin
 
   attr_reader :body
   attr_accessor :body_stream
@@ -79,6 +81,7 @@ class DeleteDocument
   include QueryStringMixin
   include DatabaseRequestMixin
   include SimpleResponseMixin
+  include HeadersMixin
 
   def initialize(doc_id, rev_id)
     @doc_id = doc_id

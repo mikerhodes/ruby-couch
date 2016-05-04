@@ -10,6 +10,7 @@ class RequestTransform
     template.body_stream = definition.body_stream if definition.respond_to?(:body_stream)
     template.content_type = definition.content_type if definition.respond_to?(:content_type)
     template.response_handler = definition.response_handler if definition.respond_to?(:response_handler)
+    template.header_items = definition.header_items if definition.respond_to?(:header_items)
     template
   end
 

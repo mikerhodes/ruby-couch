@@ -6,6 +6,7 @@ class DatabaseInfo
 
   include DatabaseRequestMixin
   include SimpleResponseMixin
+  include HeadersMixin
 
   def method
     'GET'
@@ -41,6 +42,7 @@ class CreateDatabase
 
   include DatabaseRequestMixin
   include SimpleResponseMixin
+  include HeadersMixin
 
   def method
     'PUT'
@@ -60,6 +62,7 @@ class DeleteDatabase
 
   include DatabaseRequestMixin
   include SimpleResponseMixin
+  include HeadersMixin
 
   def method
     'DELETE'

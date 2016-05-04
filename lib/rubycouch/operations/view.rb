@@ -7,6 +7,7 @@ class GetView
   include QueryStringMixin
   include DatabaseRequestMixin
   include ViewStreamingResponseMixin
+  include HeadersMixin
 
   def initialize(doc_id, view_name)
     doc_id = "_design/#{doc_id}" if !doc_id.start_with? '_design/'
