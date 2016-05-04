@@ -181,3 +181,28 @@ client.database('animaldb').make_request(get_view) do |row, idx|
 end.json
 # => {"total_rows"=>5, "offset"=>0,"rows"=>[]}
 ```
+
+### Custom Query Parameters
+
+To add your own query parameters, use `merge_query_params`:
+
+```ruby
+all_docs = AllDocs.new
+all_docs.merge_query_params({
+  :include_docs=>true,
+  :descending=>true,
+  :foo=>'bar'
+  })
+```
+
+### Custom Headers
+
+To add headers, use `merge_header_items`:
+
+```ruby
+all_dbs = AllDbs.new
+all_dbs.merge_header_items({
+  'X-Cloudant-User'=>'mikerhodes',
+  'Another-Header'=>'Another Value'
+  })
+```
