@@ -3,8 +3,6 @@ require 'rubycouch/operations/responses'
 
 class GetAttachment
 
-  # TODO callback for streaming an attachment in chunks
-
   include QueryStringMixin
   include DatabaseRequestMixin
   include SimpleResponseMixin
@@ -19,8 +17,8 @@ class GetAttachment
     'GET'
   end
 
-  def rev_id=(rev_id)
-    merge_query_items({:rev => rev_id})
+  def rev=(value)
+    merge_query_items({:rev => value.to_s})
   end
 
   def sub_path
@@ -32,7 +30,7 @@ end
 ##
 # Create or update a document.
 #
-# For update, rev_id should be supplied. For create, obviously it shouldn't
+# For update, rev should be supplied. For create, obviously it shouldn't
 # be.
 #
 # The body can be supplied as a binary blob or string etc. to `body`.
@@ -58,8 +56,8 @@ class PutAttachment
     'PUT'
   end
 
-  def rev_id=(rev_id)
-    merge_query_items({:rev => rev_id})
+  def rev=(value)
+    merge_query_items({:rev => value.to_s})
   end
 
   def sub_path
@@ -75,10 +73,10 @@ class DeleteAttachment
   include SimpleResponseMixin
   include HeadersMixin
 
-  def initialize(doc_id, attachment_name, rev_id)
+  def initialize(doc_id, attachment_name, rev)
     @doc_id = doc_id
     @attachment_name = attachment_name
-    merge_query_items({:rev => rev_id})
+    merge_query_items({:rev => rev})
   end
 
   def method
@@ -87,6 +85,11 @@ class DeleteAttachment
 
   def sub_path
     "/#{@doc_id}/#{@attachment_name}"
+  end
+
+  def batch=(value)
+    raise "batch value must be 'ok' or true" unless value or (value == 'ok')
+    merge_query_items({:batch => 'ok'})
   end
 
 end
